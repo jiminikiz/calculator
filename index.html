@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculator</title>
+  <meta name="theme-color" content="#1c1c1c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <main class="calc">
+    <output class="display" aria-live="polite">
+      <div class="last" id="last"></div>
+      <div class="current" id="current">0</div>
+    </output>
+    <div class="keys">
+      <button data-key="clear" class="wide">CE</button>
+      <button data-key="%" class="dark">%</button>
+      <button data-key="/" class="op">÷</button>
+      <button data-key="7">7</button>
+      <button data-key="8">8</button>
+      <button data-key="9">9</button>
+      <button data-key="*" class="op">×</button>
+      <button data-key="4">4</button>
+      <button data-key="5">5</button>
+      <button data-key="6">6</button>
+      <button data-key="-" class="op">−</button>
+      <button data-key="1">1</button>
+      <button data-key="2">2</button>
+      <button data-key="3">3</button>
+      <button data-key="+" class="op">+</button>
+      <button data-key="0" class="wide">0</button>
+      <button data-key=".">.</button>
+      <button data-key="=" class="op">=</button>
+    </div>
+  </main>
+  <aside class="history">
+    <header>
+      <span>History</span>
+      <button id="clear-history" title="Clear history">Clear</button>
+    </header>
+    <ol id="history"></ol>
+  </aside>
+</body>
+</html>
