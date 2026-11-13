@@ -2,7 +2,7 @@
 // and refreshes the cache in the background when one is.
 const CACHE = 'calc-v2';
 const FILES = [
-  './', 'index.html', 'style.css', 'app.js', 'calc.js', 'pip.js', 'manifest.webmanifest',
+  './', 'index.html', 'style.css', 'app.js', 'calc.js', 'pip.js', 'window-lock.js','manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png',
 ];
 

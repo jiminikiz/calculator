@@ -1,5 +1,6 @@
 import { initial, press, recall, exprText } from './calc.js';
 import { canFloat, openFloating } from './pip.js';
+import { lockWindowSize } from './window-lock.js';
 
 /** Outer size of the installed app window: a quarter of 1920×1080. */
 const WINDOW = { width: 960, height: 540 };
@@ -116,25 +117,6 @@ $('clear-history').addEventListener('click', () => {
   renderHistory();
 });
 
-/**
- * Holds the installed app window at WINDOW: sizes it on open, and snaps it back
- * after any resize. The web can't make a window non-resizable, so this is the
- * closest it gets.
- */
-function lockWindow() {
-  if (!isInstalled) return;
-  const snap = () => {
-    const isLockedSize = window.outerWidth === WINDOW.width && window.outerHeight === WINDOW.height;
-    if (!isLockedSize) window.resizeTo(WINDOW.width, WINDOW.height);
-  };
-  snap();
-  let timer;
-  window.addEventListener('resize', () => {
-    clearTimeout(timer);
-    timer = setTimeout(snap, 150);
-  });
-}
-
 const FLOAT_SIZE = { width: 340, height: 440 };
 let floating = null;
 
@@ -167,7 +149,7 @@ floatBtn.hidden = !canFloatHere;
 floatBtn.addEventListener('click', toggleFloat);
 $('unfloat').addEventListener('click', toggleFloat);
 
-lockWindow();
+if (isInstalled) lockWindowSize(window, WINDOW);
 render();
 renderHistory();
 
