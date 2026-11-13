@@ -11,7 +11,8 @@ calculator and GNOME Calculator.
 - The result of `=` becomes the next input, like a physical calculator
 - History, kept between launches; click an entry to reuse its result
 - Opens at 960×540 and snaps back to that size when installed
-- ⧉ floats the calculator in an always-on-top window (Chromium browsers)
+- ⧉ floats the calculator in an always-on-top window (Chromium browsers, in a
+  tab only; for the installed app use your desktop's Always on Top)
 - Works offline once installed
 
 ## Install

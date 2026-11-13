@@ -4,6 +4,7 @@ import { canFloat, openFloating } from './pip.js';
 /** Outer size of the installed app window: a quarter of 1920×1080. */
 const WINDOW = { width: 960, height: 540 };
 const STORE_KEY = 'calc-history';
+const isInstalled = matchMedia('(display-mode: standalone)').matches;
 
 const $ = (id) => document.getElementById(id);
 const currentEl = $('current');
@@ -121,7 +122,6 @@ $('clear-history').addEventListener('click', () => {
  * closest it gets.
  */
 function lockWindow() {
-  const isInstalled = matchMedia('(display-mode: standalone)').matches;
   if (!isInstalled) return;
   const snap = () => {
     const isLockedSize = window.outerWidth === WINDOW.width && window.outerHeight === WINDOW.height;
@@ -160,7 +160,10 @@ async function toggleFloat() {
   });
 }
 
-floatBtn.hidden = !canFloat;
+// The installed app would leave an empty window behind; the OS's own
+// "Always on Top" suits it better.
+const canFloatHere = canFloat && !isInstalled;
+floatBtn.hidden = !canFloatHere;
 floatBtn.addEventListener('click', toggleFloat);
 $('unfloat').addEventListener('click', toggleFloat);
 
