@@ -10,7 +10,8 @@ calculator and GNOME Calculator.
 - `+ − × ÷` and `%`, with normal operator precedence
 - The result of `=` becomes the next input, like a physical calculator
 - History, kept between launches; click an entry to reuse its result
-- Opens at 960×540 and snaps back to that size when installed
+- Installed, it holds its window at one of three sizes, picked with S/M/L in
+  the corner: 640×360, 960×540 (default) or 1280×720. The pick is remembered.
 - ⧉ floats the calculator in an always-on-top window (Chromium browsers, in a
   tab only; for the installed app use your desktop's Always on Top)
 - Works offline once installed

@@ -2,8 +2,14 @@ import { initial, press, recall, exprText } from './calc.js';
 import { canFloat, openFloating } from './pip.js';
 import { lockWindowSize } from './window-lock.js';
 
-/** Outer size of the installed app window: a quarter of 1920×1080. */
-const WINDOW = { width: 960, height: 540 };
+/** Outer sizes of the installed app window. M is a quarter of 1920×1080. */
+const SIZES = {
+  S: { width: 640, height: 360 },
+  M: { width: 960, height: 540 },
+  L: { width: 1280, height: 720 },
+};
+const DEFAULT_SIZE = 'M';
+const SIZE_KEY = 'calc-size';
 const STORE_KEY = 'calc-history';
 const isInstalled = matchMedia('(display-mode: standalone)').matches;
 
@@ -149,7 +155,36 @@ floatBtn.hidden = !canFloatHere;
 floatBtn.addEventListener('click', toggleFloat);
 $('unfloat').addEventListener('click', toggleFloat);
 
-if (isInstalled) lockWindowSize(window, WINDOW);
+function loadSize() {
+  try {
+    const saved = localStorage.getItem(SIZE_KEY);
+    return saved in SIZES ? saved : DEFAULT_SIZE;
+  } catch {
+    return DEFAULT_SIZE;
+  }
+}
+
+function showSize(name) {
+  for (const btn of $('sizes').children) {
+    btn.classList.toggle('active', btn.dataset.size === name);
+  }
+}
+
+if (isInstalled) {
+  const sizeName = loadSize();
+  const lock = lockWindowSize(window, SIZES[sizeName]);
+  showSize(sizeName);
+  $('sizes').hidden = false;
+  $('sizes').addEventListener('click', (e) => {
+    const name = e.target.closest('button')?.dataset.size;
+    if (!name) return;
+    try {
+      localStorage.setItem(SIZE_KEY, name);
+    } catch {}
+    showSize(name);
+    lock.setSize(SIZES[name]);
+  });
+}
 render();
 renderHistory();
 

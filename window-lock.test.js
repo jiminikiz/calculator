@@ -50,3 +50,17 @@ test('snaps back once after the user resizes', () => {
   assert.deepEqual([win.outerWidth, win.outerHeight], [961, 541]);
   mock.timers.reset();
 });
+
+test('changing the size locks to the new one', () => {
+  mock.timers.enable({ apis: ['setTimeout'] });
+  const win = roundingWindow(1280, 720);
+  const lock = lockWindowSize(win, SIZE);
+  run(10_000);
+  lock.setSize({ width: 640, height: 360 });
+  run(10_000);
+  win.drag(700, 400);
+  run(10_000);
+  assert.equal(win.resizes, 3);
+  assert.deepEqual([win.outerWidth, win.outerHeight], [641, 361]);
+  mock.timers.reset();
+});
