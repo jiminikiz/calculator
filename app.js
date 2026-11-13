@@ -1,4 +1,5 @@
 import { initial, press, recall, exprText } from './calc.js';
+import { canFloat, openFloating } from './pip.js';
 
 /** Outer size of the installed app window: a quarter of 1920×1080. */
 const WINDOW = { width: 960, height: 540 };
@@ -8,6 +9,8 @@ const $ = (id) => document.getElementById(id);
 const currentEl = $('current');
 const lastEl = $('last');
 const historyEl = $('history');
+const keysEl = document.querySelector('.keys');
+const floatBtn = $('float');
 
 let state = { ...initial(), history: loadHistory() };
 
@@ -72,7 +75,7 @@ function dispatch(key) {
 }
 
 function flash(key) {
-  const btn = document.querySelector(`[data-key="${CSS.escape(key)}"]`);
+  const btn = keysEl.querySelector(`[data-key="${CSS.escape(key)}"]`);
   if (!btn) return;
   btn.classList.add('pressed');
   setTimeout(() => btn.classList.remove('pressed'), 90);
@@ -83,7 +86,7 @@ const KEYMAP = {
   x: '*', X: '*', ',': '.',
 };
 
-document.addEventListener('keydown', (e) => {
+function onKey(e) {
   const isCopy = (e.ctrlKey || e.metaKey) && e.key === 'c';
   if (isCopy) {
     navigator.clipboard?.writeText(state.entry || '0');
@@ -96,9 +99,11 @@ document.addEventListener('keydown', (e) => {
   e.preventDefault();
   dispatch(key);
   flash(key === 'back' ? 'clear' : key);
-});
+}
 
-document.querySelector('.keys').addEventListener('click', (e) => {
+document.addEventListener('keydown', onKey);
+
+keysEl.addEventListener('click', (e) => {
   const key = e.target.closest('button')?.dataset.key;
   if (key) dispatch(key);
   e.target.blur();
@@ -129,6 +134,35 @@ function lockWindow() {
     timer = setTimeout(snap, 150);
   });
 }
+
+const FLOAT_SIZE = { width: 340, height: 440 };
+let floating = null;
+
+async function toggleFloat() {
+  if (floating) {
+    floating.close();
+    return;
+  }
+  try {
+    floating = await openFloating([document.querySelector('.calc'), document.querySelector('.history')], FLOAT_SIZE);
+  } catch {
+    return;
+  }
+  floating.document.addEventListener('keydown', onKey);
+  document.body.classList.add('floating');
+  floatBtn.title = 'Stop floating';
+  render();
+  floating.addEventListener('pagehide', () => {
+    floating = null;
+    document.body.classList.remove('floating');
+    floatBtn.title = 'Float on top';
+    requestAnimationFrame(render);
+  });
+}
+
+floatBtn.hidden = !canFloat;
+floatBtn.addEventListener('click', toggleFloat);
+$('unfloat').addEventListener('click', toggleFloat);
 
 lockWindow();
 render();
