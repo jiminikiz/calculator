@@ -1,6 +1,7 @@
 import { initial, press, recall, exprText } from './calc.js';
 
-const WINDOW = { width: 600, height: 340 };
+/** Outer size of the installed app window: a quarter of 1920×1080. */
+const WINDOW = { width: 960, height: 540 };
 const STORE_KEY = 'calc-history';
 
 const $ = (id) => document.getElementById(id);
@@ -109,16 +110,27 @@ $('clear-history').addEventListener('click', () => {
   renderHistory();
 });
 
-/** Snaps the installed app window to the calculator's size. */
-function sizeWindow() {
+/**
+ * Holds the installed app window at WINDOW: sizes it on open, and snaps it back
+ * after any resize. The web can't make a window non-resizable, so this is the
+ * closest it gets.
+ */
+function lockWindow() {
   const isInstalled = matchMedia('(display-mode: standalone)').matches;
   if (!isInstalled) return;
-  const chromeW = window.outerWidth - window.innerWidth;
-  const chromeH = window.outerHeight - window.innerHeight;
-  window.resizeTo(WINDOW.width + chromeW, WINDOW.height + chromeH);
+  const snap = () => {
+    const isLockedSize = window.outerWidth === WINDOW.width && window.outerHeight === WINDOW.height;
+    if (!isLockedSize) window.resizeTo(WINDOW.width, WINDOW.height);
+  };
+  snap();
+  let timer;
+  window.addEventListener('resize', () => {
+    clearTimeout(timer);
+    timer = setTimeout(snap, 150);
+  });
 }
 
-sizeWindow();
+lockWindow();
 render();
 renderHistory();
 
